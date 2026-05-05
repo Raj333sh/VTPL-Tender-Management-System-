@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tender Details – Vacuum Techniques Pvt. Ltd.</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a0a0a;
+    --ink-light: #5c3a3a;
+    --accent: #8b0000;
+    --accent-pale: #fdf0f0;
+    --rule: #d8c0c0;
+    --bg: #f7f2f2;
+    --card: #ffffff;
+    --danger: #c0392b;
+    --success-clr: #1a7f37;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink); color: #fff; padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 200; border-bottom: 3px solid var(--accent);
+  }
+  header h1 { font-family: var(--mono); font-size: 12px; letter-spacing:.12em; text-transform:uppercase; opacity:.7; }
+  header .co { font-family: var(--mono); font-size: 14px; font-weight:600; letter-spacing:.06em; color:#e87878; }
+  .header-actions { display:flex; gap:8px; flex-wrap:wrap; }
+
+  /* ── TABS ── */
+  .tabs { display:flex; gap:0; border-bottom: 2px solid var(--rule); background:#fff; }
+  .tab-btn {
+    font-family: var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+    padding:12px 28px; border:none; background:none; cursor:pointer; color:var(--ink-light);
+    border-bottom: 3px solid transparent; margin-bottom:-2px; transition:all .15s;
+  }
+  .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); background:var(--accent-pale); }
+  .tab-btn:hover:not(.active) { background:#f5f0f0; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    border:none; cursor:pointer; padding:9px 18px; border-radius:3px;
+    transition:opacity .15s, transform .1s; white-space:nowrap;
+  }
+  .btn:active { transform:scale(.97); }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-secondary { background:#fff; color:var(--ink); border:1.5px solid var(--rule); }
+  .btn-success { background:#1a7f37; color:#fff; }
+  .btn-danger { background:var(--danger); color:#fff; }
+  .btn-excel { background:#217346; color:#fff; }
+  .btn:hover { opacity:.82; }
+
+  /* ── VIEWS ── */
+  #formView, #dbView { display:none; padding: 32px; max-width:980px; margin:0 auto; padding-bottom:80px; }
+  #formView.active, #dbView.active { display:block; }
+
+  /* ── FORM HEADER BAR ── */
+  .form-topbar {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:20px; flex-wrap:wrap; gap:10px;
+  }
+  .form-topbar .record-badge {
+    font-family:var(--mono); font-size:11px; color:var(--accent);
+    background:var(--accent-pale); border:1px solid #e8c0c0;
+    padding:5px 12px; border-radius:20px;
+  }
+  .form-actions { display:flex; gap:8px; flex-wrap:wrap; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:14px; margin-top:32px;
+    border-left:3px solid var(--accent); padding-left:10px;
+  }
+
+  /* ── CARD ── */
+  .card { background:var(--card); border:1.5px solid var(--rule); border-radius:6px; overflow:hidden; margin-bottom:6px; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; }
+  .grid-4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; }
+
+  .field {
+    display:flex; flex-direction:column; border-right:1px solid var(--rule);
+    border-bottom:1px solid var(--rule); padding:10px 14px 8px; position:relative;
+  }
+  .field:last-child { border-right:none; }
+  .field.full { grid-column:1/-1; }
+  .field.span2 { grid-column:span 2; }
+  .field.span3 { grid-column:span 3; }
+
+  label {
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-light); margin-bottom:5px; font-weight:600;
+  }
+  input[type="text"], input[type="date"], input[type="number"], select, textarea {
+    font-family:var(--sans); font-size:13.5px; color:var(--ink);
+    border:none; outline:none; background:transparent; width:100%; resize:none; padding:0;
+  }
+  input[type="date"] { font-size:12.5px; }
+  textarea { min-height:52px; line-height:1.5; }
+  select { cursor:pointer; }
+  input::placeholder, textarea::placeholder { color:#c4a8a8; font-size:12.5px; }
+  .field:focus-within { background:var(--accent-pale); }
+  .field:focus-within label { color:var(--accent); }
+
+  /* ── CONDITIONAL ── */
+  .details-hidden { display:none !important; }
+  #successSection { display:none; }
+  #successSection.visible { display:block; }
+
+  /* ── REPEATER ── */
+  .repeater-row {
+    display:grid; grid-template-columns:1fr 140px 40px;
+    border-bottom:1px solid var(--rule); align-items:center;
+  }
+  .repeater-row:last-child { border-bottom:none; }
+  .repeater-row .field { border-bottom:none; }
+  .repeater-row .r-status { border-right:1px solid var(--rule); }
+  .row-del {
+    background:none; border:none; cursor:pointer; color:#c8a0a0;
+    font-size:16px; text-align:center; padding:0 10px; transition:color .15s;
+  }
+  .row-del:hover { color:var(--danger); }
+  .add-row-btn {
+    font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--accent);
+    background:none; border:none; cursor:pointer; padding:10px 14px;
+    text-align:left; width:100%; border-top:1px dashed var(--rule);
+  }
+  .add-row-btn:hover { background:var(--accent-pale); }
+
+  /* ── TOAST ── */
+  #toast {
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(80px);
+    background:var(--ink); color:#fff; font-family:var(--mono); font-size:12px;
+    padding:10px 24px; border-radius:30px; z-index:999; opacity:0;
+    transition:all .3s; pointer-events:none; border-left:4px solid var(--accent);
+  }
+  #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ── DB VIEW ── */
+  .db-topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+  .db-topbar h2 { font-family:var(--mono); font-size:13px; letter-spacing:.1em; color:var(--accent); }
+  .db-stats { font-family:var(--mono); font-size:11px; color:var(--ink-light); }
+
+  .db-search {
+    font-family:var(--sans); font-size:13px; padding:8px 14px;
+    border:1.5px solid var(--rule); border-radius:4px; outline:none;
+    background:#fff; color:var(--ink); width:260px;
+  }
+  .db-search:focus { border-color:var(--accent); }
+
+  .db-table-wrap { overflow-x:auto; border-radius:6px; border:1.5px solid var(--rule); background:#fff; }
+  table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  thead tr { background:var(--ink); color:#fff; }
+  thead th {
+    font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase;
+    padding:10px 12px; text-align:left; white-space:nowrap;
+  }
+  tbody tr { border-bottom:1px solid var(--rule); transition:background .12s; }
+  tbody tr:last-child { border-bottom:none; }
+  tbody tr:hover { background:var(--accent-pale); }
+  tbody td { padding:9px 12px; vertical-align:middle; }
+  .td-bid { font-family:var(--mono); font-size:11px; color:var(--accent); font-weight:600; }
+  .td-date { font-family:var(--mono); font-size:11px; color:var(--ink-light); }
+  .status-pill {
+    font-family:var(--mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase;
+    padding:3px 9px; border-radius:20px; white-space:nowrap;
+  }
+  .pill-success { background:#d4edda; color:#155724; }
+  .pill-regret { background:#f8d7da; color:#721c24; }
+  .pill-submitted { background:#cce5ff; color:#004085; }
+  .pill-other { background:#e2e3e5; color:#383d41; }
+  .row-actions { display:flex; gap:6px; }
+  .btn-sm { padding:5px 11px; font-size:10px; }
+
+  .empty-state {
+    text-align:center; padding:60px 20px; color:var(--ink-light);
+    font-family:var(--mono); font-size:12px; letter-spacing:.06em;
+  }
+  .empty-state .icon { font-size:40px; margin-bottom:12px; opacity:.4; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display:none; position:fixed; inset:0; background:rgba(26,10,10,.55);
+    z-index:500; align-items:center; justify-content:center;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    background:#fff; border-radius:8px; padding:28px 32px; max-width:420px; width:90%;
+    border-top:4px solid var(--accent); box-shadow:0 12px 40px rgba(0,0,0,.2);
+  }
+  .modal h3 { font-family:var(--mono); font-size:13px; letter-spacing:.1em; margin-bottom:10px; color:var(--accent); }
+  .modal p { font-size:13.5px; color:var(--ink-light); line-height:1.6; margin-bottom:20px; }
+  .modal-actions { display:flex; gap:10px; justify-content:flex-end; }
+
+  /* ── PRINT ── */
+  @media print {
+    @page { size:A4; margin:12mm; }
+    body { background:#fff; font-size:11px; }
+    header, .tabs, .form-topbar, .form-actions, .add-row-btn, .row-del,
+    .section-label, .no-print, #dbView, #toast, .modal-overlay { display:none !important; }
+    #formView { display:block !important; max-width:100%; padding:0; margin:0; }
+    .card { border:1px solid #000; border-radius:0; page-break-inside:avoid; }
+    .field { padding:5px 8px; border-color:#000; }
+    input, select, textarea { font-size:11px; -webkit-appearance:none; appearance:none; }
+    select { border:none; }
+    .print-title {
+      display:block !important; text-align:center; font-family:Arial,sans-serif;
+      font-size:14px; font-weight:bold; letter-spacing:.1em;
+      border:1.5px solid #000; padding:6px; margin-bottom:4px; text-transform:uppercase;
+    }
+    .field:focus-within { background:#fff; }
+    .field:focus-within label { color:#5c3a3a; }
+    #successSection { display:none; }
+    #successSection.visible { display:block; }
+    .details-hidden { display:none !important; }
+  }
+  .print-title { display:none; }
+
+  .notice {
+    font-family:var(--mono); font-size:10.5px; color:var(--ink-light);
+    padding:12px 14px; background:var(--accent-pale); border:1.5px solid #e8c0c0;
+    border-radius:4px; margin-top:24px;
+  }
+
+  /* ── STORAGE METER ── */
+  .storage-bar-wrap {
+    margin-top:6px;
+  }
+  .storage-label-row {
+    display:flex; align-items:center; justify-content:space-between;
+    font-family:var(--mono); font-size:10px; color:var(--ink-light); margin-bottom:4px;
+  }
+  .storage-pct { font-weight:600; }
+  .storage-track {
+    height:6px; background:#e8dede; border-radius:4px; overflow:hidden;
+  }
+  .storage-fill {
+    height:100%; border-radius:4px;
+    background: var(--success-clr);
+    transition: width .4s, background .4s;
+  }
+  .storage-fill.warn  { background: #d4860a; }
+  .storage-fill.full  { background: var(--danger); }
+
+  /* ── CLEAR ALL MODAL ── */
+  .modal-overlay.clear-modal .modal {
+    border-top-color: var(--danger);
+    max-width:460px;
+  }
+  .download-prompt {
+    background:#f0f8f0; border:1.5px solid #b2dfb2; border-radius:5px;
+    padding:14px 16px; margin-bottom:18px;
+    font-family:var(--sans); font-size:13px; color:#1a5c1a; line-height:1.6;
+  }
+  .download-prompt strong { font-family:var(--mono); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="co">Vacuum Techniques Pvt. Ltd.</div>
+    <h1>Tender Management System</h1>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-success" onclick="showTab('form'); newRecord()">+ New Tender</button>
+    <button class="btn btn-excel" onclick="exportExcel()">⬇ Export Excel</button>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" id="tab-form" onclick="showTab('form')">📋 Tender Form</button>
+  <button class="tab-btn" id="tab-db" onclick="showTab('db')">🗄 Saved Records</button>
+</div>
+
+<!-- ══════════════ FORM VIEW ══════════════ -->
+<div id="formView" class="active">
+  <div class="print-title">Tender Details</div>
+
+  <div class="form-topbar no-print">
+    <div id="recordBadge" class="record-badge">New Record</div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="confirmClear()">↺ Clear</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨 Print</button>
+      <button class="btn btn-success" onclick="saveRecord()">💾 Save</button>
+    </div>
+  </div>
+
+  <!-- Basic Info -->
+  <div class="section-label">Basic Information</div>
+  <div class="card">
+    <div class="grid-2">
+      <div class="field">
+        <label>Participant Name</label>
+        <input type="text" id="participant" value="Vacuum Techniques Pvt. Ltd." placeholder="Company name">
+      </div>
+      <div class="field">
+        <label>Bid Source</label>
+        <input type="text" id="bidSource" placeholder="e.g. GeM / CPP / Direct / Tender Portal">
+      </div>
+    </div>
+    <div class="grid-4">
+      <div class="field span2">
+        <label>Bid No.</label>
+        <input type="text" id="bidNo" placeholder="e.g. GEM/2024/B/12345">
+      </div>
+      <div class="field">
+        <label>Due Date</label>
+        <input type="date" id="dueDt">
+      </div>
+      <div class="field">
+        <label>Delivery Period</label>
+        <input type="text" id="deliveryPeriod" placeholder="e.g. 90 days">
+      </div>
+    </div>
+    <div class="grid-4">
+      <div class="field span2">
+        <label>Buyer</label>
+        <input type="text" id="buyer" placeholder="Buyer organisation">
+      </div>
+      <div class="field">
+        <label>Bid Submit Date</label>
+        <input type="date" id="bidSubmitDate">
+      </div>
+      <div class="field">
+        <label>Bid Status</label>
+        <select id="bidStatus" onchange="toggleSuccessSection()">
+          <option value="">— select —</option>
+          <option>Submitted</option>
+          <option>Technical Opened</option>
+          <option>Financial Opened</option>
+          <option>Success</option>
+          <option>Regret</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="field">
+        <label>Consignee</label>
+        <textarea id="consignee" placeholder="Consignee name &amp; address"></textarea>
+      </div>
+      <div class="field">
+        <label>Bid Status Reason</label>
+        <textarea id="bidStatusReason" placeholder="Reason if regret / clarification"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMD / ePBG -->
+  <div class="section-label">EMD &amp; ePBG</div>
+  <div class="card">
+    <div class="grid-4">
+      <div class="field">
+        <label>EMD</label>
+        <select id="emd" onchange="toggleDetails('emd','emdDetailsRow')">
+          <option value="">— select —</option>
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+      </div>
+      <div class="field span3 details-hidden" id="emdDetailsRow">
+        <label>EMD Details</label>
+        <input type="text" id="emdDetails" placeholder="Amount / BG no. / bank">
+      </div>
+    </div>
+    <div class="grid-4">
+      <div class="field">
+        <label>ePBG</label>
+        <select id="epbg" onchange="toggleDetails('epbg','epbgDetailsRow')">
+          <option value="">— select —</option>
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+      </div>
+      <div class="field span3 details-hidden" id="epbgDetailsRow">
+        <label>ePBG Details</label>
+        <input type="text" id="epbgDetails" placeholder="Amount / BG no. / bank">
+      </div>
+    </div>
+  </div>
+
+  <!-- Product -->
+  <div class="section-label">Product &amp; Pricing</div>
+  <div class="card">
+    <div class="grid-4">
+      <div class="field span2">
+        <label>Product</label>
+        <input type="text" id="product" placeholder="Product / item description">
+      </div>
+      <div class="field">
+        <label>Quantity</label>
+        <input type="number" id="quantity" placeholder="0">
+      </div>
+      <div class="field">
+        <label>RA Enabled</label>
+        <select id="raEnabled">
+          <option value="">— select —</option>
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="field">
+        <label>Quoted Price (₹)</label>
+        <input type="text" id="quotedPrice" placeholder="e.g. 12,50,000">
+      </div>
+      <div class="field">
+        <label>Warranty</label>
+        <input type="text" id="warranty" placeholder="e.g. 1 year on-site">
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="field">
+        <label>Quotation No.</label>
+        <input type="text" id="quotationNo" placeholder="e.g. VTPL/QTN/2024/001">
+      </div>
+      <div class="field">
+        <!-- spacer -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Documents -->
+  <div class="section-label">Documents Required &amp; Compliance</div>
+  <div class="card" id="docsCard">
+    <div id="docRows"></div>
+    <button class="add-row-btn no-print" onclick="addRow('docRows','doc')">+ Add Document Row</button>
+  </div>
+
+  <!-- Requirement Prior Production -->
+  <div class="section-label">Requirement Prior to Production</div>
+  <div class="card" id="reqCard">
+    <div id="reqRows"></div>
+    <button class="add-row-btn no-print" onclick="addRow('reqRows','req')">+ Add Requirement Row</button>
+  </div>
+
+  <!-- Inspection -->
+  <div class="section-label">Inspection</div>
+  <div class="card" id="inspCard">
+    <div id="inspRows"></div>
+    <button class="add-row-btn no-print" onclick="addRow('inspRows','insp')">+ Add Inspection Row</button>
+  </div>
+
+  <!-- PDI -->
+  <div class="section-label">PDI (Pre-Dispatch Inspection)</div>
+  <div class="card" id="pdiCard">
+    <div id="pdiRows"></div>
+    <button class="add-row-btn no-print" onclick="addRow('pdiRows','pdi')">+ Add PDI Row</button>
+  </div>
+
+  <!-- Delivery Extension -->
+  <div class="section-label">Delivery Extension Process</div>
+  <div class="card">
+    <div class="field full">
+      <label>Delivery Extension Process Details</label>
+      <textarea id="deliveryExt" rows="3" placeholder="Describe any delivery extension process, LD waiver, etc."></textarea>
+    </div>
+  </div>
+
+  <!-- If Success -->
+  <div id="successSection">
+    <div class="section-label">If Success – Order Details</div>
+    <div class="card">
+      <div class="grid-4">
+        <div class="field span2">
+          <label>PO No.</label>
+          <input type="text" id="poNo" placeholder="Purchase Order number">
+        </div>
+        <div class="field">
+          <label>PO Date</label>
+          <input type="date" id="poDate">
+        </div>
+        <div class="field">
+          <label>Delivery Due Date</label>
+          <input type="date" id="deliveryDueDate">
+        </div>
+      </div>
+      <div class="grid-4">
+        <div class="field span2">
+          <label>PO Amount (₹)</label>
+          <input type="text" id="poAmount" placeholder="e.g. 12,50,000">
+        </div>
+        <div class="field">
+          <label>Contact Person</label>
+          <input type="text" id="contactPerson" placeholder="Name &amp; phone">
+        </div>
+        <div class="field">
+          <label>Invoice No.</label>
+          <input type="text" id="invoiceNo" placeholder="Invoice number">
+        </div>
+      </div>
+      <div class="grid-4">
+        <div class="field">
+          <label>Invoice Date</label>
+          <input type="date" id="invoiceDate">
+        </div>
+        <div class="field span2">
+          <label>Delivery Status</label>
+          <select id="deliveryStatus">
+            <option value="">— select —</option>
+            <option>In Production</option>
+            <option>In PDI</option>
+            <option>Out for Delivery</option>
+            <option>Delivered</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Payment Status</label>
+          <select id="paymentStatus">
+            <option value="">— select —</option>
+            <option>In Process</option>
+            <option>Received</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice no-print">
+    💾 Use <strong>Save</strong> to store this tender in local database &nbsp;|&nbsp;
+    🗄 View all records in <strong>Saved Records</strong> tab &nbsp;|&nbsp;
+    🖨 <strong>Print</strong> generates A4 printout &nbsp;|&nbsp;
+    ⬇ <strong>Export Excel</strong> downloads all records as .xlsx
+  </div>
+</div>
+
+<!-- ══════════════ DB VIEW ══════════════ -->
+<div id="dbView">
+  <div class="db-topbar">
+    <div style="flex:1;min-width:220px;">
+      <h2>Saved Tender Records</h2>
+      <div class="db-stats" id="dbStats">0 records stored</div>
+      <!-- Storage capacity bar -->
+      <div class="storage-bar-wrap" id="storageBarWrap">
+        <div class="storage-label-row">
+          <span>Storage Used</span>
+          <span class="storage-pct" id="storagePct">0%</span>
+        </div>
+        <div class="storage-track">
+          <div class="storage-fill" id="storageFill" style="width:0%"></div>
+        </div>
+        <div class="storage-label-row" style="margin-top:3px;">
+          <span id="storageBytes">0 KB used</span>
+          <span id="storageLimit">of ~5 MB</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;">
+      <input type="text" class="db-search" id="dbSearch" placeholder="Search bid no / buyer / product…" oninput="renderTable()">
+      <button class="btn btn-excel" onclick="exportExcel()">⬇ Export Excel</button>
+      <button class="btn btn-danger" onclick="openClearAllModal()">🗑 Clear All</button>
+    </div>
+  </div>
+  <div class="db-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Bid No.</th>
+          <th>Buyer</th>
+          <th>Product</th>
+          <th>Due Date</th>
+          <th>Bid Status</th>
+          <th>Quoted Price</th>
+          <th>Saved On</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="dbTableBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="icon">🗄</div>
+      No records found. Save a tender from the form tab.
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>Delete Record</h3>
+    <p>Are you sure you want to permanently delete this tender record? This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLEAR ALL MODAL -->
+<div class="modal-overlay clear-modal" id="clearAllModal">
+  <div class="modal">
+    <h3>🗑 Clear All Records</h3>
+    <div class="download-prompt">
+      <strong>⬇ Recommended:</strong> Download a backup before deleting.<br>
+      All records will be permanently removed from local storage and <strong>cannot be recovered</strong>.
+    </div>
+    <p>Would you like to download all data as Excel before clearing?</p>
+    <div class="modal-actions" style="flex-wrap:wrap;gap:8px;">
+      <button class="btn btn-secondary" onclick="closeClearAllModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="clearAllData(false)">Delete Without Download</button>
+      <button class="btn btn-excel" onclick="clearAllData(true)">⬇ Download &amp; Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+const DB_KEY = 'vtpl_tenders';
+let currentId = null; // null = new record
+let pendingDeleteId = null;
+const rowCounts = {};
+
+// ══════════════════════════════════════════
+//  TAB SWITCHING
+// ══════════════════════════════════════════
+function showTab(tab) {
+  document.getElementById('formView').classList.toggle('active', tab === 'form');
+  document.getElementById('dbView').classList.toggle('active', tab === 'db');
+  document.getElementById('tab-form').classList.toggle('active', tab === 'form');
+  document.getElementById('tab-db').classList.toggle('active', tab === 'db');
+  if (tab === 'db') renderTable();
+}
+
+// ══════════════════════════════════════════
+//  REPEATER ROWS
+// ══════════════════════════════════════════
+function addRow(containerId, prefix, item='', status='') {
+  if (!rowCounts[prefix]) rowCounts[prefix] = 0;
+  rowCounts[prefix]++;
+  const n = rowCounts[prefix];
+  const div = document.createElement('div');
+  div.className = 'repeater-row';
+  div.id = prefix + 'Row' + n;
+  div.innerHTML = `
+    <div class="field">
+      <label>Compliance / Item</label>
+      <input type="text" placeholder="Enter compliance item or document name" value="${escHtml(item)}">
+    </div>
+    <div class="field r-status">
+      <label>Status</label>
+      <select>
+        <option value="">— select —</option>
+        ${['Complied','Not Complied','N/A','Pending'].map(o=>`<option${o===status?' selected':''}>${o}</option>`).join('')}
+      </select>
+    </div>
+    <button class="row-del no-print" title="Remove row" onclick="removeRow('${prefix}Row${n}')">✕</button>
+  `;
+  document.getElementById(containerId).appendChild(div);
+}
+
+function removeRow(id) { document.getElementById(id)?.remove(); }
+
+function seedRows() {
+  ['doc','req','insp','pdi'].forEach(p => {
+    const map = { doc:'docRows', req:'reqRows', insp:'inspRows', pdi:'pdiRows' };
+    for (let i = 0; i < 4; i++) addRow(map[p], p);
+  });
+}
+
+function clearRepeaters() {
+  ['docRows','reqRows','inspRows','pdiRows'].forEach(id => {
+    document.getElementById(id).innerHTML = '';
+  });
+  Object.keys(rowCounts).forEach(k => delete rowCounts[k]);
+}
+
+function getRepeaterData(containerId) {
+  const rows = document.querySelectorAll('#' + containerId + ' .repeater-row');
+  return Array.from(rows).map(row => ({
+    item: row.querySelector('input')?.value || '',
+    status: row.querySelector('select')?.value || ''
+  })).filter(r => r.item || r.status);
+}
+
+function loadRepeaterData(containerId, prefix, data=[]) {
+  if (data.length === 0) { for(let i=0;i<4;i++) addRow(containerId, prefix); return; }
+  data.forEach(r => addRow(containerId, prefix, r.item, r.status));
+}
+
+// ══════════════════════════════════════════
+//  CONDITIONAL SHOW/HIDE
+// ══════════════════════════════════════════
+function toggleSuccessSection() {
+  const val = document.getElementById('bidStatus').value;
+  document.getElementById('successSection').classList.toggle('visible', val === 'Success');
+}
+function toggleDetails(selectId, rowId) {
+  const val = document.getElementById(selectId).value;
+  document.getElementById(rowId).classList.toggle('details-hidden', val !== 'Yes');
+}
+
+// ══════════════════════════════════════════
+//  COLLECT / POPULATE FORM
+// ══════════════════════════════════════════
+function collectForm() {
+  return {
+    id: currentId || Date.now(),
+    savedAt: currentId ? (getRecord(currentId)?.savedAt || Date.now()) : Date.now(),
+    updatedAt: Date.now(),
+    participant: v('participant'),
+    bidSource: v('bidSource'),
+    bidNo: v('bidNo'),
+    dueDt: v('dueDt'),
+    deliveryPeriod: v('deliveryPeriod'),
+    buyer: v('buyer'),
+    bidSubmitDate: v('bidSubmitDate'),
+    bidStatus: v('bidStatus'),
+    consignee: v('consignee'),
+    bidStatusReason: v('bidStatusReason'),
+    emd: v('emd'),
+    emdDetails: v('emdDetails'),
+    epbg: v('epbg'),
+    epbgDetails: v('epbgDetails'),
+    product: v('product'),
+    quantity: v('quantity'),
+    raEnabled: v('raEnabled'),
+    quotedPrice: v('quotedPrice'),
+    quotationNo: v('quotationNo'),
+    warranty: v('warranty'),
+    docs: getRepeaterData('docRows'),
+    req: getRepeaterData('reqRows'),
+    insp: getRepeaterData('inspRows'),
+    pdi: getRepeaterData('pdiRows'),
+    deliveryExt: v('deliveryExt'),
+    poNo: v('poNo'),
+    poDate: v('poDate'),
+    deliveryDueDate: v('deliveryDueDate'),
+    poAmount: v('poAmount'),
+    contactPerson: v('contactPerson'),
+    invoiceNo: v('invoiceNo'),
+    invoiceDate: v('invoiceDate'),
+    deliveryStatus: v('deliveryStatus'),
+    paymentStatus: v('paymentStatus'),
+  };
+}
+
+function populateForm(rec) {
+  const fields = ['participant','bidSource','bidNo','dueDt','deliveryPeriod','buyer','bidSubmitDate',
+    'bidStatus','consignee','bidStatusReason','emd','emdDetails','epbg','epbgDetails',
+    'product','quantity','raEnabled','quotedPrice','quotationNo','warranty','deliveryExt',
+    'poNo','poDate','deliveryDueDate','poAmount','contactPerson','invoiceNo',
+    'invoiceDate','deliveryStatus','paymentStatus'];
+  fields.forEach(f => {
+    const el = document.getElementById(f);
+    if (el) el.value = rec[f] || '';
+  });
+  toggleSuccessSection();
+  toggleDetails('emd','emdDetailsRow');
+  toggleDetails('epbg','epbgDetailsRow');
+  clearRepeaters();
+  loadRepeaterData('docRows','doc', rec.docs);
+  loadRepeaterData('reqRows','req', rec.req);
+  loadRepeaterData('inspRows','insp', rec.insp);
+  loadRepeaterData('pdiRows','pdi', rec.pdi);
+}
+
+function v(id) { return document.getElementById(id)?.value?.trim() || ''; }
+
+// ══════════════════════════════════════════
+//  LOCAL STORAGE DB
+// ══════════════════════════════════════════
+function getAll() {
+  try { return JSON.parse(localStorage.getItem(DB_KEY)) || []; } catch { return []; }
+}
+function saveAll(records) { localStorage.setItem(DB_KEY, JSON.stringify(records)); }
+function getRecord(id) { return getAll().find(r => r.id === id); }
+
+function saveRecord() {
+  const data = collectForm();
+  if (!data.bidNo && !data.buyer && !data.product) {
+    toast('⚠ Please fill at least Bid No., Buyer or Product before saving.'); return;
+  }
+
+  // Pre-save storage check
+  const usagePct = getStorageUsagePct();
+  if (usagePct >= 95) {
+    const proceed = confirm(
+      '⚠ Storage is almost full (' + Math.round(usagePct) + '% used).\n\n' +
+      'Saving may fail or overwrite data. Consider exporting and clearing old records first.\n\n' +
+      'Do you still want to save?'
+    );
+    if (!proceed) return;
+  }
+
+  let records = getAll();
+  const idx = records.findIndex(r => r.id === data.id);
+  if (idx >= 0) { records[idx] = data; toast('✅ Record updated successfully!'); }
+  else { records.unshift(data); toast('✅ Tender saved to database!'); }
+
+  try {
+    saveAll(records);
+  } catch(e) {
+    // QuotaExceededError
+    toast('❌ Storage full! Export and clear old records to free up space.');
+    alert('❌ Storage Quota Exceeded!\n\nYour browser storage is full.\nPlease go to Saved Records → Export Excel, then use Clear All to free space before saving new records.');
+    return;
+  }
+
+  currentId = data.id;
+  updateBadge();
+  updateStorageMeter();
+}
+
+function deleteRecord(id) {
+  let records = getAll().filter(r => r.id !== id);
+  saveAll(records);
+  if (currentId === id) newRecord();
+  renderTable();
+  toast('🗑 Record deleted.');
+}
+
+function editRecord(id) {
+  const rec = getRecord(id);
+  if (!rec) return;
+  currentId = id;
+  populateForm(rec);
+  updateBadge();
+  showTab('form');
+  window.scrollTo({ top: 0, behavior:'smooth' });
+}
+
+function newRecord() {
+  currentId = null;
+  clearRepeaters();
+  document.querySelectorAll('input, textarea').forEach(el => {
+    if (el.id === 'participant') { el.value = 'Vacuum Techniques Pvt. Ltd.'; return; }
+    el.value = '';
+  });
+  document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  document.getElementById('successSection').classList.remove('visible');
+  document.getElementById('emdDetailsRow').classList.add('details-hidden');
+  document.getElementById('epbgDetailsRow').classList.add('details-hidden');
+  seedRows();
+  updateBadge();
+}
+
+function updateBadge() {
+  const badge = document.getElementById('recordBadge');
+  if (currentId) {
+    const rec = getRecord(currentId);
+    badge.textContent = `Editing: ${rec?.bidNo || 'ID '+currentId}`;
+    badge.style.background = '#fff3cd';
+    badge.style.borderColor = '#ffc107';
+    badge.style.color = '#856404';
+  } else {
+    badge.textContent = 'New Record';
+    badge.style.background = '';
+    badge.style.borderColor = '';
+    badge.style.color = '';
+  }
+}
+
+// ══════════════════════════════════════════
+//  TABLE RENDER
+// ══════════════════════════════════════════
+function renderTable() {
+  const q = document.getElementById('dbSearch').value.toLowerCase();
+  let records = getAll();
+  if (q) records = records.filter(r =>
+    (r.bidNo||'').toLowerCase().includes(q) ||
+    (r.buyer||'').toLowerCase().includes(q) ||
+    (r.product||'').toLowerCase().includes(q) ||
+    (r.bidStatus||'').toLowerCase().includes(q)
+  );
+  const tbody = document.getElementById('dbTableBody');
+  const empty = document.getElementById('emptyState');
+  const all = getAll();
+  document.getElementById('dbStats').textContent = `${all.length} record${all.length!==1?'s':''} stored`;
+
+  updateStorageMeter();
+
+  if (records.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  tbody.innerHTML = records.map((r,i) => `
+    <tr>
+      <td class="td-date">${i+1}</td>
+      <td class="td-bid">${escHtml(r.bidNo||'—')}</td>
+      <td>${escHtml(r.buyer||'—')}</td>
+      <td>${escHtml(r.product||'—')}</td>
+      <td class="td-date">${r.dueDt||'—'}</td>
+      <td><span class="status-pill ${pillClass(r.bidStatus)}">${escHtml(r.bidStatus||'—')}</span></td>
+      <td>${escHtml(r.quotedPrice ? '₹'+r.quotedPrice : '—')}</td>
+      <td class="td-date">${fmtDate(r.updatedAt||r.savedAt)}</td>
+      <td>
+        <div class="row-actions">
+          <button class="btn btn-secondary btn-sm" onclick="editRecord(${r.id})">✏ Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="openDeleteModal(${r.id})">🗑</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ══════════════════════════════════════════
+//  STORAGE METER
+// ══════════════════════════════════════════
+const LS_QUOTA_BYTES = 5 * 1024 * 1024; // ~5 MB typical localStorage quota
+
+function getStorageUsedBytes() {
+  let total = 0;
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      total += (localStorage.getItem(key) || '').length * 2; // UTF-16 = 2 bytes/char
+    }
+  } catch(e) {}
+  return total;
+}
+
+function getStorageUsagePct() {
+  return Math.min((getStorageUsedBytes() / LS_QUOTA_BYTES) * 100, 100);
+}
+
+function fmtBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+function updateStorageMeter() {
+  const used = getStorageUsedBytes();
+  const pct  = getStorageUsagePct();
+
+  const fill  = document.getElementById('storageFill');
+  const pctEl = document.getElementById('storagePct');
+  const byteEl = document.getElementById('storageBytes');
+
+  if (!fill) return;
+
+  fill.style.width = pct.toFixed(1) + '%';
+  pctEl.textContent = Math.round(pct) + '%';
+  byteEl.textContent = fmtBytes(used) + ' used';
+
+  fill.classList.remove('warn','full');
+  if (pct >= 90)      fill.classList.add('full');
+  else if (pct >= 70) fill.classList.add('warn');
+
+  // Storage-full banner alert (shown once per session per threshold)
+  const alertKey = pct >= 90 ? 'full' : pct >= 70 ? 'warn' : null;
+  if (alertKey && sessionStorage.getItem('storageAlerted') !== alertKey) {
+    sessionStorage.setItem('storageAlerted', alertKey);
+    const msg = pct >= 90
+      ? '⚠ Storage is almost full (' + Math.round(pct) + '%)! Please export and clear old records to prevent data loss.'
+      : '⚠ Storage is ' + Math.round(pct) + '% full. Consider exporting your data soon.';
+    setTimeout(() => toast(msg), 200);
+  }
+}
+
+// ══════════════════════════════════════════
+//  CLEAR ALL DATA
+// ══════════════════════════════════════════
+function openClearAllModal() {
+  const records = getAll();
+  if (records.length === 0) { toast('⚠ No records to clear.'); return; }
+  document.getElementById('clearAllModal').classList.add('open');
+}
+function closeClearAllModal() {
+  document.getElementById('clearAllModal').classList.remove('open');
+}
+function clearAllData(downloadFirst) {
+  closeClearAllModal();
+  if (downloadFirst) {
+    exportExcel();
+    // Short delay so the download triggers before data wipes
+    setTimeout(() => {
+      localStorage.removeItem(DB_KEY);
+      currentId = null;
+      updateBadge();
+      renderTable();
+      toast('✅ All records cleared after download.');
+    }, 800);
+  } else {
+    localStorage.removeItem(DB_KEY);
+    currentId = null;
+    updateBadge();
+    renderTable();
+    toast('🗑 All records permanently cleared.');
+  }
+}
+document.getElementById('clearAllModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeClearAllModal();
+});
+
+function pillClass(s) {
+  if (!s) return 'pill-other';
+  if (s === 'Success') return 'pill-success';
+  if (s === 'Regret') return 'pill-regret';
+  if (s === 'Submitted') return 'pill-submitted';
+  return 'pill-other';
+}
+
+// ══════════════════════════════════════════
+//  EXCEL EXPORT
+// ══════════════════════════════════════════
+function exportExcel() {
+  const records = getAll();
+  if (records.length === 0) { toast('⚠ No records to export.'); return; }
+
+  // Build CSV-based Excel (tab-separated, .xls trick for broad compatibility)
+  const headers = [
+    'Bid No.','Bid Source','Buyer','Product','Quantity','Quotation No.','Due Date','Bid Submit Date','Bid Status',
+    'Bid Status Reason','Consignee','EMD','EMD Details','ePBG','ePBG Details',
+    'Quoted Price','RA Enabled','Warranty','Delivery Period','Delivery Extension',
+    'PO No.','PO Date','PO Amount','Delivery Due Date','Contact Person',
+    'Invoice No.','Invoice Date','Delivery Status','Payment Status',
+    'Docs (item|status)','Requirements (item|status)','Inspection (item|status)','PDI (item|status)',
+    'Participant Name','Saved At','Updated At'
+  ];
+
+  const rows = records.map(r => [
+    r.bidNo, r.bidSource, r.buyer, r.product, r.quantity, r.quotationNo, r.dueDt, r.bidSubmitDate, r.bidStatus,
+    r.bidStatusReason, r.consignee, r.emd, r.emdDetails, r.epbg, r.epbgDetails,
+    r.quotedPrice, r.raEnabled, r.warranty, r.deliveryPeriod, r.deliveryExt,
+    r.poNo, r.poDate, r.poAmount, r.deliveryDueDate, r.contactPerson,
+    r.invoiceNo, r.invoiceDate, r.deliveryStatus, r.paymentStatus,
+    (r.docs||[]).map(d=>d.item+'|'+d.status).join('; '),
+    (r.req||[]).map(d=>d.item+'|'+d.status).join('; '),
+    (r.insp||[]).map(d=>d.item+'|'+d.status).join('; '),
+    (r.pdi||[]).map(d=>d.item+'|'+d.status).join('; '),
+    r.participant, fmtDate(r.savedAt), fmtDate(r.updatedAt)
+  ].map(cell => '"' + String(cell||'').replace(/"/g,'""') + '"'));
+
+  const csv = [headers.map(h=>`"${h}"`).join(','), ...rows.map(r=>r.join(','))].join('\r\n');
+  const bom = '\uFEFF'; // UTF-8 BOM for Excel
+  const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Tenders_VTPL_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('✅ Excel file downloaded!');
+}
+
+// ══════════════════════════════════════════
+//  MODAL
+// ══════════════════════════════════════════
+function openDeleteModal(id) {
+  pendingDeleteId = id;
+  document.getElementById('deleteModal').classList.add('open');
+}
+function closeModal() {
+  pendingDeleteId = null;
+  document.getElementById('deleteModal').classList.remove('open');
+}
+document.getElementById('confirmDeleteBtn').onclick = () => {
+  if (pendingDeleteId) deleteRecord(pendingDeleteId);
+  closeModal();
+};
+document.getElementById('deleteModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+// ══════════════════════════════════════════
+//  CLEAR
+// ══════════════════════════════════════════
+function confirmClear() {
+  if (!confirm('Clear the form? Unsaved changes will be lost.')) return;
+  newRecord();
+}
+
+// ══════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtDate(ts) {
+  if (!ts) return '—';
+  return new Date(ts).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+seedRows();
+updateBadge();
+updateStorageMeter();
+</script>
+</body>
+</html>
